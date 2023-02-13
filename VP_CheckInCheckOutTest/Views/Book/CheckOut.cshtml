@@ -1,0 +1,83 @@
+﻿@model CheckOutRequest
+@{
+    Layout = null;
+    ViewData["Title"] = "Book Check Out";
+}
+
+<div class="text-center">
+    <div class="row text-left books">
+        <div class="col-sm-8">
+            @using (Html.BeginForm(FormMethod.Post, new { @id = "checkOutForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-group row">
+                            @Html.LabelFor(m => m.Name, null, new { @class = "col-sm-4" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(x => x.Name, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.Name) })
+                                @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @Html.LabelFor(m => m.MobilePhoneNumber, null, new { @class = "col-sm-4" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(x => x.MobilePhoneNumber, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.MobilePhoneNumber) })
+                                @Html.ValidationMessageFor(m => m.MobilePhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            @Html.LabelFor(m => m.NationalId, null, new { @class = "col-sm-4" })
+                            <div class="col-sm-8">
+                                @Html.TextBoxFor(x => x.NationalId, new { @class = "form-control", placeholder = Html.DisplayNameFor(m => m.NationalId) })
+                                @Html.ValidationMessageFor(m => m.NationalId, "", new { @class = "text-danger" })
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success float-right">Check Out</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-sm-4">
+            <div class="card mb-4 rounded-3 shadow-sm book-block">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12"><b>Title</b></div>
+                        <div class="col-12">@Model.Book.Title</div>
+                        <div class="dot-line"></div>
+                        <div class="col-12"><b>ISBN</b></div>
+                        <div class="col-12">@Model.Book.ISBN</div>
+                        <div class="dot-line"></div>
+                        <div class="col-12"><b>Publish Year</b></div>
+                        <div class="col-12">@Model.Book.PublishYear</div>
+                        <div class="dot-line"></div>
+                        <div class="col-12"><b>Cover Price</b></div>
+                        <div class="col-12">@(Model.Book.CoverPrice)$</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(function () {
+        $("#MobilePhoneNumber").mask("999 999 9999", { placeholder: "___ ___ ____" });
+        $("#NationalId").mask("99999999999", { placeholder: "___________" });
+
+        $("#checkOutForm").submit(function (event) {
+            event.preventDefault();
+            $.post($(this).attr('action'), {
+                "__RequestVerificationToken": $("input:hidden[name=__RequestVerificationToken]").val(),
+                "Name": $("#Name").val(),
+                "MobilePhoneNumber": $("#MobilePhoneNumber").val(),
+                "NationalId": $("#NationalId").val()
+            }, function () {
+                window.location.reload();
+            });
+        });
+
+    })
+</script>

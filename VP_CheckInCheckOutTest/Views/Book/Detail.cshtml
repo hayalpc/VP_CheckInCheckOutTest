@@ -1,0 +1,84 @@
+﻿@model Book
+@{
+    Layout = null;
+    ViewData["Title"] = "Book Detail";
+}
+<div class="text-center">
+    <div class="row text-left books">
+        <div class="col-sm-12">
+            <div class="card mb-4 rounded-3 shadow-sm book-block">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-5"><b>Title</b></div>
+                        <div class="col-sm-7">@Model.Title</div>
+                        <div class="dot-line"></div>
+                        <div class="col-sm-5"><b>ISBN</b></div>
+                        <div class="col-sm-7">@Model.ISBN</div>
+                        <div class="dot-line"></div>
+                        <div class="col-sm-5"><b>Publish Year</b></div>
+                        <div class="col-sm-7">@Model.PublishYear</div>
+                        <div class="dot-line"></div>
+                        <div class="col-sm-5"><b>Cover Price</b></div>
+                        <div class="col-sm-7">@(Model.CoverPrice)$</div>
+                        <div class="dot-line"></div>
+                        <div class="col-sm-5"><b>Status</b></div>
+                        <div class="col-sm-7">@(Model.Status)</div>
+                        <div class="dot-line"></div>
+                        @{
+                            if (Model.Status == BookStatus.ACTIVE)
+                            {
+                                <button class="btn btn-sm btn-success btn-block mt-1" id="book-checkout" onclick="return $.get('/book/checkOut/@Model.Id', function (html) {$('#bookDetail').modal('hide');$('#bookCheckOutIn').modal('show');$('#bookCheckOutInBody').html(html);$('#bookCheckOutInTitle').html('Book Check Out');});">Check Out</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-warning btn-block mt-1" id="book-checkin" onclick="return $.get('/book/checkIn/@Model.Id', function (html) {$('#bookDetail').modal('hide');$('#bookCheckOutIn').modal('show');$('#bookCheckOutInBody').html(html);$('#bookCheckOutInTitle').html('Book Check In');});">Check In</button>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-4 rounded-3 shadow-sm book-block">
+                <div class="card-body">
+                    @{
+                        if (Model.BookHistory.Count > 0)
+                        {
+                            <table class="table table-bordered table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Mobile Phone Number</th>
+                                        <th>National Id</th>
+                                        <th>Checked Out Time</th>
+                                        <th>Return Time</th>
+                                        <th>Action Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        foreach (var history in Model.BookHistory)
+                                        {
+                                            <tr>
+                                                <td>@history.CheckedOutUser.Name</td>
+                                                <td>@history.CheckedOutUser.MobilePhoneNumber</td>
+                                                <td>@history.CheckedOutUser.NationalId</td>
+                                                <td>@history.CheckedOutUser.CheckedOutTime</td>
+                                                <td>@history.CheckedOutUser.ReturnTime</td>
+                                                <td>@history.CreateTime</td>
+                                                <td>@history.Status</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <span>History not found</span>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

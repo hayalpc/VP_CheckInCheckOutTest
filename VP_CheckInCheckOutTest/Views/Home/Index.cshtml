@@ -1,0 +1,137 @@
+﻿@model List<Book>
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Books</h1>
+    <div class="row text-left books">
+        @{
+            foreach (var book in Model)
+            {
+                <div href="/book/detail/@book.Id" class="col-sm-6">
+                    <div class="card mb-4 rounded-3 shadow-sm book-block">
+                        <div class="card-body">
+                            <div class="rad-bt">
+                                <input name="bookId" type="radio" id="bookId_@book.Id" value="@book.Id" data-status="@book.Status" />
+                            </div>
+                            <label class="row" for="bookId_@book.Id">
+                                <div class="col-sm-5"><b>Title</b></div>
+                                <div class="col-sm-7">@book.Title</div>
+                                <div class="dot-line"></div>
+                                <div class="col-sm-5"><b>ISBN</b></div>
+                                <div class="col-sm-7">@book.ISBN</div>
+                                <div class="dot-line"></div>
+                                <div class="col-sm-5"><b>Publish Year</b></div>
+                                <div class="col-sm-7">@book.PublishYear</div>
+                                <div class="dot-line"></div>
+                                <div class="col-sm-5"><b>Cover Price</b></div>
+                                <div class="col-sm-7">@(book.CoverPrice)$</div>
+                                <div class="dot-line"></div>
+                                <div class="col-sm-5"><b>Status</b></div>
+                                <div class="col-sm-7">@(book.Status)</div>
+                                <div class="dot-line"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        <div class="col-12 ">
+            <button class="btn btn-sm btn-primary float-left" id="book-detail" disabled onclick="return detail()">Detail</button>
+            <button class="btn btn-sm btn-success float-right" id="book-checkout" disabled onclick="return checkOut()">Check Out</button>
+            <button class="btn btn-sm btn-warning float-right mr-1" id="book-checkin" disabled onclick="return checkIn()">Check In</button>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bookDetail" tabindex="-1" role="dialog" aria-labelledby="bookDetail" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Book Detail</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bookDetailBody">
+
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="bookCheckOutIn" tabindex="-1" role="dialog" aria-labelledby="bookCheckOutIn" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookCheckOutInTitle">Book Check Out/In</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="bookCheckOutInBody">
+
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        var bookId = 0;
+        $(function () {
+            $('input:radio[name="bookId"]').change(radioControl);
+            $('input:radio[name="bookId"]:checked').each(radioControl)
+        });
+
+        function radioControl() {
+            $("#book-detail").attr("disabled", "disabled");
+            $("#book-checkout").attr("disabled", "disabled");
+            $("#book-checkin").attr("disabled", "disabled");
+
+            bookId = $(this).val();
+            if (bookId > 0) {
+                $("#book-detail").removeAttr("disabled");
+                var status = $(this).data("status");
+                if (status == "@BookStatus.CHECKOUT") {
+                    $("#book-checkin").removeAttr("disabled");
+                } else {
+                    $("#book-checkout").removeAttr("disabled");
+                }
+            }
+        }
+
+        function detail() {
+            if (bookId > 0) {
+                $.get("/book/detail/" + bookId, function (html) {
+                    $("#bookDetail").modal("show");
+                    $("#bookDetailBody").html(html);
+                });
+            }
+        }
+
+        function checkOut() {
+            if (bookId > 0) {
+                $.get("/book/checkOut/" + bookId, function (html) {
+                    $("#bookCheckOutIn").modal("show");
+                    $("#bookCheckOutInBody").html(html);
+                    $("#bookCheckOutInTitle").html("Book Check Out");
+                })
+            }
+        }
+
+        function checkIn() {
+            if (bookId > 0) {
+                $.get("/book/checkIn/" + bookId, function (html) {
+                    $("#bookCheckOutIn").modal("show");
+                    $("#bookCheckOutInBody").html(html);
+                    $("#bookCheckOutInTitle").html("Book Check In");
+                })
+            }
+        }
+    </script>
+}

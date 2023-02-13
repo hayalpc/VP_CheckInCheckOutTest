@@ -1,0 +1,43 @@
+﻿@model List<Book>
+@{
+    ViewData["Title"] = "Home page";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+<div class="text-center">
+    <div class="row">
+        <div class="card-body">
+            <a href="/book/add" class="btn btn-success btn-sm float-right"><i class="fas fa-plus"></i> Add New Book</a>
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>ISBN</th>
+                        <th>Publish Time</th>
+                        <th>Cover Price</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var book in Model)
+                        {
+                            <tr>
+                                <td>@book.Title</td>
+                                <td>@book.ISBN</td>
+                                <td>@book.PublishYear</td>
+                                <td>@(book.CoverPrice)$</td>
+                                <td>@book.Status</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm rounded-circle" data-toggle="tooltip" data-placement="top" title="Edit" href="/book/edit/@book.Id"><i class="fas fa-pen"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
